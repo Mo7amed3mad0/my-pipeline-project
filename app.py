@@ -1,20 +1,28 @@
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "🚀 App is running successfully!"
+
+@app.route('/add/<int:a>/<int:b>')
 def add(a, b):
-    return a + b
+    return f"➕ {a} + {b} = {a + b}"
 
+@app.route('/subtract/<int:a>/<int:b>')
 def subtract(a, b):
-    return a - b
+    return f"➖ {a} - {b} = {a - b}"
 
+@app.route('/multiply/<int:a>/<int:b>')
 def multiply(a, b):
-    return a * b
+    return f"✖️ {a} × {b} = {a * b}"
 
+@app.route('/divide/<int:a>/<int:b>')
 def divide(a, b):
     if b == 0:
-        raise ValueError("Cannot divide by zero")
-    return a / b
+        return "❌ Cannot divide by zero!"
+    return f"➗ {a} ÷ {b} = {a / b}"
 
 if __name__ == "__main__":
-    print("App is running!")
-    print(f"2 + 3 = {add(2, 3)}")
-    print(f"10 - 4 = {subtract(10, 4)}")
-    print(f"3 * 5 = {multiply(3, 5)}")
-    print(f"10 / 2 = {divide(10, 2)}")
+    app.run(debug=True, port=5000)
