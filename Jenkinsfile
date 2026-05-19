@@ -2,78 +2,66 @@ pipeline {
     agent any
 
     environment {
-        DEPLOY_DIR  = "C:\\DeployedApp\\myapp"
-        VENV_DIR    = "venv"
-        PYTHON      = "C:\\Users\\lenovo\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
-        PIP         = "C:\\Users\\lenovo\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\pip.exe"
+        VENV_DIR = "venv"
+        PYTHON   = "C:\\Users\\lenovo\\AppData\\Local\\Programs\\Python\\Python313\\python.exe"
     }
 
     stages {
 
-        // ──────────────────────────────────────
-        // STAGE 1 : CHECKOUT
-        // ──────────────────────────────────────
         stage('Checkout') {
             steps {
-                echo '🔵 Checking out source code from GitHub...'
+                echo '🔵 Checkout code...'
                 checkout scm
-                echo '✅ Checkout done.'
+                echo '✅ Done'
             }
         }
 
-        // ──────────────────────────────────────
-        // STAGE 2 : BUILD
-        // ──────────────────────────────────────
         stage('Build') {
             steps {
-                echo '🔵 Setting up Python virtual environment...'
+                echo '🔵 Creating virtual environment...'
+
                 bat """
                     "%PYTHON%" -m venv %VENV_DIR%
-                    call %VENV_DIR%\\Scripts\\activate.bat
-                    "%PIP%" install --upgrade pip
-                    "%PIP%" install -r requirements.txt
+                    %VENV_DIR%\\Scripts\\python.exe -m pip install --upgrade pip
+                    %VENV_DIR%\\Scripts\\python.exe -m pip install -r requirements.txt
                 """
-                echo '✅ Build done.'
+
+                echo '✅ Build completed'
             }
         }
 
-// ──────────────────────────────────────
-        // STAGE 3 : TEST
-        // ──────────────────────────────────────
         stage('Test') {
             steps {
-                echo '🔵 Running pytest...'
+                echo '🔵 Running tests...'
+
                 bat """
-                    "%PYTHON%" -m pytest test_app.py -v
+                    %VENV_DIR%\\Scripts\\python.exe -m pytest test_app.py -v
                 """
-                echo '✅ All tests passed.'
+
+                echo '✅ Tests passed'
             }
         }
-        // ──────────────────────────────────────
-        // STAGE 4 : DEPLOY
-        // ──────────────────────────────────────
+
         stage('Deploy') {
             steps {
-                echo '🔵 Deploying application...'
+                echo '🔵 Deploying app...'
+
                 bat """
-                    if not exist "%DEPLOY_DIR%" mkdir "%DEPLOY_DIR%"
-                    xcopy /E /Y /I . "%DEPLOY_DIR%"
-                    echo Deployed successfully > "%DEPLOY_DIR%\\deploy.log"
+                    start "flask-app" /B %VENV_DIR%\\Scripts\\python.exe app.py > app.log 2>&1
                 """
-                echo '✅ Deployment complete!'
+
+                echo '🚀 App running on http://localhost:5000'
             }
         }
     }
 
     post {
         success {
-            echo '🎉 Pipeline finished SUCCESSFULLY!'
+            echo '🎉 Pipeline SUCCESS'
         }
+
         failure {
-            echo '❌ Pipeline FAILED — check the logs above.'
-        }
-        always {
-            cleanWs()
+            echo '❌ Pipeline FAILED'
         }
     }
 }
