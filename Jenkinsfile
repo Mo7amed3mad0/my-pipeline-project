@@ -37,20 +37,18 @@ pipeline {
             }
         }
 
-        // ──────────────────────────────────────
+// ──────────────────────────────────────
         // STAGE 3 : TEST
         // ──────────────────────────────────────
         stage('Test') {
             steps {
                 echo '🔵 Running pytest...'
                 bat """
-                    call %VENV_DIR%\\Scripts\\activate.bat
-                    %VENV_DIR%\\Scripts\\pytest.exe test_app.py -v
+                    "%PYTHON%" -m pytest test_app.py -v
                 """
                 echo '✅ All tests passed.'
             }
         }
-
         // ──────────────────────────────────────
         // STAGE 4 : DEPLOY
         // ──────────────────────────────────────
