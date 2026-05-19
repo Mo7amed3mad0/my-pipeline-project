@@ -2,27 +2,29 @@ from flask import Flask
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return "🚀 App is running successfully!"
 
-@app.route('/add/<int:a>/<int:b>')
 def add(a, b):
-    return f"➕ {a} + {b} = {a + b}"
+    return a + b
 
-@app.route('/subtract/<int:a>/<int:b>')
+
 def subtract(a, b):
-    return f"➖ {a} - {b} = {a - b}"
+    return a - b
 
-@app.route('/multiply/<int:a>/<int:b>')
+
 def multiply(a, b):
-    return f"✖️ {a} × {b} = {a * b}"
+    return a * b
 
-@app.route('/divide/<int:a>/<int:b>')
+
 def divide(a, b):
     if b == 0:
-        return "❌ Cannot divide by zero!"
-    return f"➗ {a} ÷ {b} = {a / b}"
+        raise ValueError("Cannot divide by zero")
+    return a / b
+
+
+@app.route("/")
+def home():
+    return "CI/CD Pipeline Running Successfully 🚀"
+
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", port=5000)
